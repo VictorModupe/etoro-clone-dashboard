@@ -3,6 +3,7 @@ import { AccountVerification } from "@/components/AccountVerification";
 import { BigMoversHeatmap } from "@/components/BigMoversHeatmap";
 import { PopularInvestors } from "@/components/PopularInvestors";
 import { MarketDataTable } from "@/components/MarketDataTable";
+import { TopStories } from "@/components/TopStories";
 
 const Index = () => {
   return (
@@ -25,6 +26,9 @@ const Index = () => {
 
         {/* Market data table */}
         <MarketDataTable />
+        
+        {/* Top Stories section */}
+        <TopStories />
       </div>
     </TradingLayout>
   );
