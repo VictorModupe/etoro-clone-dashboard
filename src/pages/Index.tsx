@@ -8,7 +8,7 @@ import { TopStories } from "@/components/TopStories";
 const Index = () => {
   return (
     <TradingLayout>
-      <div className="max-w-7xl mx-auto space-y-6">
+      <div className="max-w-7xl mx-auto space-y-6 bg-black-900">
         {/* Account verification section */}
         <AccountVerification />
         

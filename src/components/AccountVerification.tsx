@@ -34,12 +34,12 @@ export function AccountVerification() {
             Verifying your identity helps us prevent someone else from creating an account in your name.
           </p>
           
-          <Button className="bg-primary hover:bg-primary/90">
+          <Button className="bg-green-700 hover:bg-primary/90">
             Verify Your Account
           </Button>
         </div>
 
-        <div className="ml-6">
+        {/* <div className="ml-6">
           <div className="w-48 h-32 bg-gradient-primary rounded-lg flex items-center justify-center relative overflow-hidden">
             <div className="absolute inset-0 bg-black/20 rounded-lg"></div>
             <div className="relative text-white text-center">
@@ -49,7 +49,7 @@ export function AccountVerification() {
               <div className="absolute top-2 right-2 w-8 h-8 bg-white/20 rounded-full"></div>
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );

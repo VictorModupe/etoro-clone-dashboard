@@ -44,9 +44,8 @@ export function TradingSidebar({ className }: TradingSidebarProps) {
 
   return (
     <div className={cn(
-      "flex flex-col bg-sidebar text-sidebar-foreground transition-all duration-300",
-      isCollapsed ? "w-16" : "w-60",
-      className
+      "fixed top-0 left-0 h-screen bg-sidebar text-sidebar-foreground transition-all duration-300",
+      isCollapsed ? "w-14" : "h-30",
     )}>
       {/* Header */}
       <div className="flex items-center justify-between p-4">
@@ -76,7 +75,7 @@ export function TradingSidebar({ className }: TradingSidebarProps) {
           </div>
           {!isCollapsed && (
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium truncate">victormodupe</p>
+              <p className="text-sm font-medium truncate">user-victormodupe</p>
             </div>
           )}
         </div>
@@ -93,23 +92,26 @@ export function TradingSidebar({ className }: TradingSidebarProps) {
       <Separator className="bg-sidebar-border" />
 
       {/* Navigation */}
-      <nav className="flex-1 px-2 py-4 space-y-1">
+      <nav className="flex-1 px-2 py-4 space-y-1 w-15">
         {navigation.map((item) => (
           <NavLink
             key={item.name}
             to={item.href}
             className={({ isActive }) =>
               cn(
-                "flex items-center px-2 py-2 text-sm font-medium rounded-md transition-colors",
+                "flex items-center px-2 py-2 text-sm font-light rounded-md transition-colors",
                 "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+                isCollapsed && "justify-center py-5",
                 isActive 
                   ? "bg-sidebar-primary text-sidebar-primary-foreground" 
                   : "text-sidebar-foreground"
               )
             }
           >
-            <item.icon className={cn("h-5 w-5", !isCollapsed && "mr-3")} />
-            {!isCollapsed && item.name}
+            {/* <item.icon className={cn("h-5 w-5", !isCollapsed && "mr-3")} />
+            {!isCollapsed && item.name } */}
+            {isCollapsed && <item.icon className="h-5 w-5" />}
+      {!isCollapsed && <span>{item.name}</span>}
           </NavLink>
         ))}
 
@@ -125,8 +127,8 @@ export function TradingSidebar({ className }: TradingSidebarProps) {
                 key={item.name}
                 to={item.href}
                 className={({ isActive }) =>
-                  cn(
-                    "flex items-center px-2 py-2 text-sm font-medium rounded-md transition-colors",
+                  cn( 
+                    "pl-10 flex items-center px-2 py-2 text-sm font-light rounded-md transition-colors",
                     "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
                     isActive 
                       ? "bg-sidebar-primary text-sidebar-primary-foreground" 
@@ -134,8 +136,10 @@ export function TradingSidebar({ className }: TradingSidebarProps) {
                   )
                 }
               >
-                <item.icon className="h-5 w-5 mr-3" />
-                {item.name}
+                {/* <item.icon className="h-5 w-5 mr-3" />
+                {!isCollapsed && item.name} */}
+                {isCollapsed && <item.icon className="h-5 w-5" />}
+      {!isCollapsed && <span>{item.name}</span>}
               </NavLink>
             ))}
           </>
@@ -148,7 +152,7 @@ export function TradingSidebar({ className }: TradingSidebarProps) {
           className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
           size={isCollapsed ? "sm" : "default"}
         >
-          {isCollapsed ? "+" : "Deposit Funds"}
+          {isCollapsed ? "⚙" : "Deposit Funds"}
         </Button>
         {!isCollapsed && (
           <Button 
@@ -156,7 +160,7 @@ export function TradingSidebar({ className }: TradingSidebarProps) {
             className="w-full mt-2 text-sidebar-foreground hover:bg-sidebar-accent"
           >
             <LogOut className="h-4 w-4 mr-2" />
-            Logout
+            Switch to Virtual
           </Button>
         )}
       </div>
