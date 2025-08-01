@@ -1,14 +1,43 @@
+import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
+import { MarketDataService, StockData } from "@/services/marketDataService";
 
-interface StockData {
-  symbol: string;
-  name: string;
-  change: number;
-  size: string;
-  logo: string;
-}
+export function BigMoversHeatmap() {
+  const [stocksData, setStocksData] = useState<StockData[]>([]);
+  const [loading, setLoading] = useState(true);
 
-const stocksData: StockData[] = [
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const service = MarketDataService.getInstance();
+        const data = await service.getStockData();
+        setStocksData(data);
+      } catch (error) {
+        console.error('Failed to load stock data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    loadData();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="bg-gradient-card rounded-lg p-6 shadow-trading">
+        <div className="animate-pulse space-y-4">
+          <div className="h-6 bg-muted rounded w-1/3"></div>
+          <div className="grid grid-cols-12 grid-rows-6 gap-1 h-80">
+            {[...Array(20)].map((_, i) => (
+              <div key={i} className="bg-muted rounded animate-pulse"></div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const stockDataArray = [
   { symbol: "NVDA", name: "NVIDIA Corp", change: 3.2, size: "xl", logo: "🟢" },
   { symbol: "AAPL", name: "Apple Inc", change: 2.1, size: "lg", logo: "🍎" },
   { symbol: "MSFT", name: "Microsoft", change: 1.8, size: "xl", logo: "🔷" },
@@ -31,9 +60,8 @@ const sizeClasses = {
   xs: "col-span-1 row-span-1 text-sm"
 };
 
-export function BigMoversHeatmap() {
   return (
-    <div className="bg-card rounded-lg p-6 shadow-card">
+    <div className="bg-gradient-card rounded-lg p-6 shadow-trading border border-border/50">
       <h2 className="text-xl font-bold mb-4">Big Movers</h2>
       
       {/* Category tabs */}

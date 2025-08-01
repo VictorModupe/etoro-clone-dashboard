@@ -1,20 +1,45 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { MarketDataService, MarketData } from "@/services/marketDataService";
 
-interface MarketData {
-  ticker: string;
-  flag: string;
-  price: number;
-  changePercent: number;
-  change: number;
-  bid: number;
-  ask: number;
-  high: number;
-  low: number;
-}
+export function MarketDataTable() {
+  const [selectedFilter, setSelectedFilter] = useState("Overview");
+  const [marketData, setMarketData] = useState<MarketData[]>([]);
+  const [loading, setLoading] = useState(true);
 
-const marketData: MarketData[] = [
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const service = MarketDataService.getInstance();
+        const data = await service.getMarketData();
+        setMarketData(data);
+      } catch (error) {
+        console.error('Failed to load market data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    loadData();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="bg-gradient-card rounded-lg shadow-card p-6">
+        <div className="animate-pulse space-y-4">
+          <div className="h-6 bg-muted rounded w-1/4"></div>
+          <div className="space-y-3">
+            {[...Array(5)].map((_, i) => (
+              <div key={i} className="h-12 bg-muted rounded"></div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const marketDataRows = [
   {
     ticker: "AUDCAD",
     flag: "🇦🇺🇨🇦",
@@ -105,20 +130,19 @@ const marketData: MarketData[] = [
   }
 ];
 
-export function MarketDataTable() {
-  const [selectedFilter, setSelectedFilter] = useState("Overview");
+  // Remove the old export and update with the existing component logic
 
   return (
-    <div className="bg-card rounded-lg shadow-card">
+    <div className="bg-gradient-card rounded-lg shadow-trading border border-border/50">
       {/* Header */}
-      <div className="p-4 border-b border-border">
+      <div className="p-6 border-b border-border/50">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold">Markets</h2>
+          <h2 className="text-xl font-bold text-foreground">Markets</h2>
           <div className="flex items-center space-x-2">
-            <Button variant="outline" size="sm">
+            <Button variant="secondary" size="sm" className="bg-trading-red/10 text-trading-red border-trading-red/20 hover:bg-trading-red/20">
               Markets are shaking
             </Button>
-            <Button variant="outline" size="sm">
+            <Button variant="secondary" size="sm" className="bg-trading-green/10 text-trading-green border-trading-green/20 hover:bg-trading-green/20">
               Outperformers to Watch
             </Button>
           </div>
@@ -130,15 +154,17 @@ export function MarketDataTable() {
               variant={selectedFilter === "Overview" ? "default" : "ghost"}
               size="sm"
               onClick={() => setSelectedFilter("Overview")}
+              className="bg-primary hover:bg-primary-hover"
             >
               Overview
             </Button>
-            <div className="text-sm text-muted-foreground">
-              📊 49 MATCHES
+            <div className="text-sm text-muted-foreground flex items-center space-x-1">
+              <span>📊</span>
+              <span>{marketData.length} MATCHES</span>
             </div>
           </div>
           
-          <Button variant="outline" size="sm">
+          <Button variant="outline" size="sm" className="border-border/50 hover:bg-muted/50">
             Major, Minor Pairs ▼
           </Button>
         </div>
@@ -147,39 +173,41 @@ export function MarketDataTable() {
       {/* Table */}
       <div className="overflow-x-auto">
         <table className="w-full">
-          <thead className="bg-muted/50">
+          <thead className="bg-muted/30">
             <tr className="text-left">
-              <th className="px-4 py-3 text-sm font-medium text-muted-foreground">
-                TICKER<br />49 MATCHES
+              <th className="px-6 py-4 text-sm font-medium text-muted-foreground">
+                TICKER<br />{marketData.length} MATCHES
               </th>
-              <th className="px-4 py-3 text-sm font-medium text-muted-foreground">PRICE</th>
-              <th className="px-4 py-3 text-sm font-medium text-muted-foreground">CHG %</th>
-              <th className="px-4 py-3 text-sm font-medium text-muted-foreground">CHG</th>
-              <th className="px-4 py-3 text-sm font-medium text-muted-foreground">BID</th>
-              <th className="px-4 py-3 text-sm font-medium text-muted-foreground">ASK</th>
-              <th className="px-4 py-3 text-sm font-medium text-muted-foreground">HIGH</th>
-              <th className="px-4 py-3 text-sm font-medium text-muted-foreground">LOW</th>
+              <th className="px-6 py-4 text-sm font-medium text-muted-foreground">PRICE</th>
+              <th className="px-6 py-4 text-sm font-medium text-muted-foreground">CHG %</th>
+              <th className="px-6 py-4 text-sm font-medium text-muted-foreground">CHG</th>
+              <th className="px-6 py-4 text-sm font-medium text-muted-foreground">BID</th>
+              <th className="px-6 py-4 text-sm font-medium text-muted-foreground">ASK</th>
+              <th className="px-6 py-4 text-sm font-medium text-muted-foreground">HIGH</th>
+              <th className="px-6 py-4 text-sm font-medium text-muted-foreground">LOW</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-border">
+          <tbody className="divide-y divide-border/30">
             {marketData.map((item, index) => (
-              <tr key={item.ticker} className="hover:bg-muted/30 transition-colors">
-                <td className="px-4 py-3">
-                  <div className="flex items-center space-x-2">
-                    <span className="text-lg">{item.flag}</span>
-                    <span className="font-medium text-trading-blue">{item.ticker}</span>
+              <tr key={item.ticker} className="hover:bg-muted/20 transition-all duration-200 hover:shadow-sm cursor-pointer">
+                <td className="px-6 py-4">
+                  <div className="flex items-center space-x-3">
+                    <span className="text-xl">{item.flag}</span>
+                    <span className="font-semibold text-trading-blue">{item.ticker}</span>
                   </div>
                 </td>
-                <td className="px-4 py-3 font-mono text-sm">{item.price}</td>
-                <td className="px-4 py-3">
+                <td className="px-6 py-4 font-mono text-sm font-medium text-foreground">{item.price}</td>
+                <td className="px-6 py-4">
                   <span className={cn(
-                    "font-medium text-sm",
-                    item.changePercent >= 0 ? "text-trading-green" : "text-trading-red"
+                    "font-semibold text-sm px-2 py-1 rounded",
+                    item.changePercent >= 0 
+                      ? "text-trading-green bg-trading-green/10" 
+                      : "text-trading-red bg-trading-red/10"
                   )}>
                     {item.changePercent >= 0 ? "+" : ""}{item.changePercent.toFixed(2)}%
                   </span>
                 </td>
-                <td className="px-4 py-3">
+                <td className="px-6 py-4">
                   <span className={cn(
                     "font-medium text-sm",
                     item.change >= 0 ? "text-trading-green" : "text-trading-red"
@@ -187,10 +215,10 @@ export function MarketDataTable() {
                     {item.change >= 0 ? "+" : ""}{item.change.toFixed(6)}
                   </span>
                 </td>
-                <td className="px-4 py-3 font-mono text-sm">{item.bid}</td>
-                <td className="px-4 py-3 font-mono text-sm">{item.ask}</td>
-                <td className="px-4 py-3 font-mono text-sm">{item.high}</td>
-                <td className="px-4 py-3 font-mono text-sm">{item.low}</td>
+                <td className="px-6 py-4 font-mono text-sm text-muted-foreground">{item.bid}</td>
+                <td className="px-6 py-4 font-mono text-sm text-muted-foreground">{item.ask}</td>
+                <td className="px-6 py-4 font-mono text-sm text-muted-foreground">{item.high}</td>
+                <td className="px-6 py-4 font-mono text-sm text-muted-foreground">{item.low}</td>
               </tr>
             ))}
           </tbody>
